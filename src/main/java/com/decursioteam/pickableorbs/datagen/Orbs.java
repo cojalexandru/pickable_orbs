@@ -25,9 +25,9 @@ public class Orbs{
 
     public static Codec<Orbs> codec(String name) {
         return RecordCodecBuilder.create(instance -> instance.group(
-                OrbData.codec(name).fieldOf("OrbData").orElseGet((Consumer<String>) s -> PickableOrbs.LOGGER.error("OrbData is REQUIRED!"), null).forGetter(com.decursioteam.pickableorbs.datagen.Orbs::getData),
-                ExtraOptions.CODEC.fieldOf("ExtraData").orElse(ExtraOptions.DEFAULT).forGetter(com.decursioteam.pickableorbs.datagen.Orbs::getExtraData)
-        ).apply(instance, com.decursioteam.pickableorbs.datagen.Orbs::new));
+                OrbData.codec(name).fieldOf("OrbData").orElseGet((Consumer<String>) s -> PickableOrbs.LOGGER.error("OrbData is REQUIRED!"), null).forGetter(Orbs::getData),
+                ExtraOptions.CODEC.fieldOf("ExtraData").orElse(ExtraOptions.DEFAULT).forGetter(Orbs::getExtraData)
+        ).apply(instance, Orbs::new));
     }
 
     protected OrbData orbData;
@@ -102,7 +102,7 @@ public class Orbs{
             return this;
         }
 
-        public Mutable setData(ExtraOptions extraData) {
+        public Mutable setExtraData(ExtraOptions extraData) {
             this.extraData = extraData;
             return this;
         }

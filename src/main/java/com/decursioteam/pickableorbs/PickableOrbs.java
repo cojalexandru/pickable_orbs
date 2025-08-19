@@ -7,15 +7,21 @@ import com.decursioteam.pickableorbs.datagen.OrbsData;
 import com.decursioteam.pickableorbs.entities.HalfHeartEntity;
 import com.decursioteam.pickableorbs.registries.OrbsRegistry;
 import com.decursioteam.pickableorbs.registries.Registry;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -29,7 +35,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Mod("pickableorbs")
@@ -93,7 +101,6 @@ public class PickableOrbs {
             }
         });
     }
-
     private void entityDropEvent(LivingDeathEvent e){
         LivingEntity entity = e.getEntity();
         Level world = entity.getCommandSenderWorld();

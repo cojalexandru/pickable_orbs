@@ -13,6 +13,7 @@
   },
   "ExtraData": {
     "pickup-message": "You've picked up a health orb!",
+    "bottleable": false,
     "animation": false,
     "sound": true,
     "follow-player": false,

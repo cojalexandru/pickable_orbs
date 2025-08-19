@@ -42,6 +42,7 @@
 "Well let's start with the **OrbData** field first, there we can have:" +
 ">     "name": "<name>" -> The default name that an orb receives is the name of the file, but you can change that by adding this parameter" +
 ">     "type": "<type>" -> At the moment there are 8 types of orbs, **healing**, **poisonous**, **damaging**, **jumping**, **speedster**, **confusion**, **levitation** and **fire_resistance**." +
+">     "texture: "<path>" -> Here you can put a custom path for a texture, by default it's set to "pickableorbs:textures/entity/plain_orb.png"" +
 ">     "effectMultiplier": "<number value>", -> Sets the multiplier of the effect" +
 ">     "effectDuration": "<number value>", -> Sets the duration of the effect, unavailable for the **healing** and **damaging** types." +
 ">     "color": "<color hex code>", -> Sets the color that should be applied over the plain texture of an orb, just use any color picker you can find on google that also offers you an hex code." +
@@ -58,6 +59,7 @@
 
 ">     "pickup-message": "<string message>", -> Sets the message that the player should receive when he pickups up this orb." +
 ">     "animation": <true/false>, -> Toggles the animation for this orb." +
+">     "bottleable": <true/false>, -> Toggles between the player being able to pick the orb up with a bottle or not." +
 ">     "sound": <true/false>, -> Toggles the sound for this orb." +
 ">     "follow-player": <true/false>, -> Toggles the follow player function (exactly how an Experience Orb does in vanilla) for this orb." +
 ">     "pickup-delay": <time in ticks (20 ticks = 1 second)> -> Sets the pickup delay(the amount of time that has to pass after the orb was spawned so that a player can pick it up) of this orb." +

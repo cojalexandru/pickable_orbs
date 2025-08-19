@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -19,93 +18,118 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
-import java.awt.*;
+import java.awt.Color;
 
 @OnlyIn(Dist.CLIENT)
 public class HalfHeartRenderer extends EntityRenderer<HalfHeartEntity> {
 
-    private ResourceLocation HALF_HEART_TEXTURE;
-    private RenderType RENDER_TYPE;
+    private static final float SCALE = 0.3F;
+    private static final float Y_OFFSET = 0.1F;
+    private static final int LIGHT_ADJUSTMENT = 7;
+    private static final float SHADOW_RADIUS = 0.15F;
+    private static final float SHADOW_STRENGTH = 0.75F;
+    private static final int SPRITE_SHEET_SIZE = 64;
+    private static final int SPRITE_SIZE = 16;
+    private static final int SPRITES_PER_ROW = 4;
 
-    protected final int r;
-    protected final int g;
-    protected final int b;
-    protected final boolean animation;
+    private final ResourceLocation halfHeartTexture;
+    private final RenderType renderType;
+    private final Color color;
+    private final boolean animation;
 
-    public HalfHeartRenderer(EntityRendererProvider.Context renderManagerIn, OrbData orbData, ExtraOptions extraData) {
-        super(renderManagerIn);
-        this.shadowRadius = 0.15F;
-        this.HALF_HEART_TEXTURE = orbData.getTexture();
-        this.RENDER_TYPE = RenderType.entityTranslucent(HALF_HEART_TEXTURE);
-        if(!orbData.getColor().contains("#")){
-            String newColor = "#" + orbData.getColor();
-            this.r = Color.decode(newColor).getRed();
-            this.g = Color.decode(newColor).getGreen();
-            this.b = Color.decode(newColor).getBlue();
-        } else {
-            this.r = Color.decode(orbData.getColor()).getRed();
-            this.g = Color.decode(orbData.getColor()).getGreen();
-            this.b = Color.decode(orbData.getColor()).getBlue();
-        }
+    public HalfHeartRenderer(EntityRendererProvider.Context renderManager, OrbData orbData, ExtraOptions extraData) {
+        super(renderManager);
+        this.shadowRadius = SHADOW_RADIUS;
+        this.shadowStrength = SHADOW_STRENGTH;
+
+        this.halfHeartTexture = orbData.getTexture();
+        this.renderType = RenderType.entityCutout(halfHeartTexture);
+        this.color = parseColor(orbData.getColor());
         this.animation = extraData.getAnimation();
-
-        this.shadowStrength = 0.75F;
     }
 
-    @Override
-    public boolean shouldRender(HalfHeartEntity p_114491_, Frustum p_114492_, double p_114493_, double p_114494_, double p_114495_) {
-        return true;
-    }
-
-    protected int getBlockLightLevel(HalfHeartEntity p_225624_1_, BlockPos p_225624_2_) {
-        return Mth.clamp(super.getBlockLightLevel(p_225624_1_, p_225624_2_) + 7, 0, 15);
-    }
-
-    public void render(HalfHeartEntity p_225623_1_, float p_225623_2_, float p_225623_3_, PoseStack p_225623_4_, MultiBufferSource p_225623_5_, int p_225623_6_) {
-        p_225623_4_.pushPose();
-        int i = 1;
-        float f = (float) (i % 4 * 16 + 0) / 64.0F;
-        float f1 = (float) (i % 4 * 16 + 16) / 64.0F;
-        float f2 = (float) (i / 4 * 16 + 0) / 64.0F;
-        float f3 = (float) (i / 4 * 16 + 16) / 64.0F;
-        float f8 = ((float) p_225623_1_.tickCount + p_225623_3_) / 2.0F;
-        int R = (int) ((Mth.sin(f8 + 0.0F) + 1.0F) * 0.5F * (float)r);
-        int G = (int) ((Mth.sin(f8 + 0.0F) + 1.0F) * 0.5F * (float)g);
-        int B = (int) ((Mth.sin(f8 + 0.0F) + 1.0F) * 0.5F * (float)b);
-        p_225623_4_.translate(0.0D, (double) 0.1F, 0.0D);
-        p_225623_4_.mulPose(this.entityRenderDispatcher.cameraOrientation());
-        p_225623_4_.mulPose(Axis.YP.rotationDegrees(180.0F));
-        p_225623_4_.scale(0.3F, 0.3F, 0.3F);
-        VertexConsumer ivertexbuilder = p_225623_5_.getBuffer(RENDER_TYPE);
-        PoseStack.Pose matrixstack$entry = p_225623_4_.last();
-        Matrix4f matrix4f = matrixstack$entry.pose();
-        Matrix3f matrix3f = matrixstack$entry.normal();
-
-        if(animation) {
-            vertex(true, ivertexbuilder, matrix4f, matrix3f, -0.5F, -0.25F, R, G, B, f, f3, p_225623_6_);
-            vertex(true,ivertexbuilder, matrix4f, matrix3f, 0.5F, -0.25F, R, G, B, f1, f3, p_225623_6_);
-            vertex(true,ivertexbuilder, matrix4f, matrix3f, 0.5F, 0.75F, R, G, B, f1, f2, p_225623_6_);
-            vertex(true,ivertexbuilder, matrix4f, matrix3f, -0.5F, 0.75F, R, G, B, f, f2, p_225623_6_);
-        } else {
-            vertex(false, ivertexbuilder, matrix4f, matrix3f, -0.5F, -0.25F, r, g, b, f, f3, p_225623_6_);
-            vertex(false, ivertexbuilder, matrix4f, matrix3f, 0.5F, -0.25F, r, g, b, f1, f3, p_225623_6_);
-            vertex(false, ivertexbuilder, matrix4f, matrix3f, 0.5F, 0.75F, r, g, b, f1, f2, p_225623_6_);
-            vertex(false, ivertexbuilder, matrix4f, matrix3f, -0.5F, 0.75F, r, g, b, f, f2, p_225623_6_);
+    private static Color parseColor(String colorString) {
+        if (!colorString.startsWith("#")) {
+            colorString = "#" + colorString;
         }
-        p_225623_4_.popPose();
-        super.render(p_225623_1_, p_225623_2_, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_);
+        return Color.decode(colorString);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(HalfHeartEntity p_110775_1_) {
-        return HALF_HEART_TEXTURE;
+    protected int getBlockLightLevel(HalfHeartEntity entity, BlockPos pos) {
+        return Mth.clamp(super.getBlockLightLevel(entity, pos) + LIGHT_ADJUSTMENT, 0, 15);
     }
 
-    private static void vertex(boolean animation, VertexConsumer bufferIn, Matrix4f matrixIn, Matrix3f matrixNormalIn, float x, float y, int red, int green, int blue, float texU, float texV, int packedLight) {
-        if(animation) {
-            bufferIn.vertex(matrixIn, x, y, 0.0F).color(red, green, blue, 155).uv(texU, texV).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(matrixNormalIn, 0.0F, 1.0F, 0.0F).endVertex();
-        } else
-        bufferIn.vertex(matrixIn, x, y, 0.0F).color(red, green, blue, 255).uv(texU, texV).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(matrixNormalIn, 0.0F, 1.0F, 0.0F).endVertex();
+    @Override
+    public void render(HalfHeartEntity entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
+        matrixStack.pushPose();
+        setupTransformation(matrixStack);
+
+        VertexConsumer vertexConsumer = buffer.getBuffer(renderType);
+        PoseStack.Pose pose = matrixStack.last();
+        Matrix4f matrix4f = pose.pose();
+        Matrix3f matrix3f = pose.normal();
+
+        // Calculate the normal based on camera orientation
+        float cameraYaw = this.entityRenderDispatcher.camera.getYRot();
+        float cameraPitch = this.entityRenderDispatcher.camera.getXRot();
+        Vector3f normal = new Vector3f(0.0F, 0.0F, 1.0F);
+        normal.rotate(Axis.YP.rotationDegrees(-cameraYaw));
+        normal.rotate(Axis.XP.rotationDegrees(-cameraPitch));
+
+        float animationProgress = ((float) entity.tickCount + partialTicks) / 2.0F;
+        Color renderColor = animation ? getAnimatedColor(animationProgress) : color;
+
+        int spriteIndex = (entity.tickCount / 2) % 16; // Change sprite every 2 ticks, cycle through all 16 sprites
+        renderQuad(vertexConsumer, matrix4f, new Matrix3f().rotationXYZ((float) Math.toRadians(cameraPitch), (float) Math.toRadians(cameraYaw), 0.0F), renderColor, packedLight, spriteIndex);
+
+        matrixStack.popPose();
+        super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
+    }
+
+    private void setupTransformation(PoseStack matrixStack) {
+        matrixStack.translate(0.0D, Y_OFFSET, 0.0D);
+        matrixStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+        matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+        matrixStack.scale(SCALE, SCALE, SCALE);
+    }
+
+    private Color getAnimatedColor(float progress) {
+        float factor = (Mth.sin(progress) + 1.0F) * 0.5F;
+        return new Color(
+                Math.round(factor * color.getRed()),
+                Math.round(factor * color.getGreen()),
+                Math.round(factor * color.getBlue()),
+                animation ? 155 : 255
+        );
+    }
+
+    private void renderQuad(VertexConsumer buffer, Matrix4f pose, Matrix3f normal, Color color, int packedLight, int spriteIndex) {
+        float minU = (spriteIndex % SPRITES_PER_ROW) * SPRITE_SIZE / (float)SPRITE_SHEET_SIZE;
+        float maxU = minU + SPRITE_SIZE / (float)SPRITE_SHEET_SIZE;
+        float minV = (spriteIndex / SPRITES_PER_ROW) * SPRITE_SIZE / (float)SPRITE_SHEET_SIZE;
+        float maxV = minV + SPRITE_SIZE / (float)SPRITE_SHEET_SIZE;
+
+        vertex(buffer, pose, normal, -0.5F, -0.25F, color, minU, maxV, packedLight);
+        vertex(buffer, pose, normal, 0.5F, -0.25F, color, maxU, maxV, packedLight);
+        vertex(buffer, pose, normal, 0.5F, 0.75F, color, maxU, minV, packedLight);
+        vertex(buffer, pose, normal, -0.5F, 0.75F, color, minU, minV, packedLight);
+    }
+
+    private static void vertex(VertexConsumer buffer, Matrix4f pose, Matrix3f normal, float x, float y, Color color, float texU, float texV, int packedLight) {
+        buffer.vertex(pose, x, y, 0.0F)
+                .color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha())
+                .uv(texU, texV)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(packedLight)
+                .normal(normal, 0.0F, 1.0F, 0.0F)
+                .endVertex();
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(HalfHeartEntity entity) {
+        return halfHeartTexture;
     }
 }
