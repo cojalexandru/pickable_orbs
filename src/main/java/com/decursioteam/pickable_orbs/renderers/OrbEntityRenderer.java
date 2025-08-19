@@ -1,8 +1,8 @@
-package com.decursioteam.pickableorbs.renderers;
+package com.decursioteam.pickable_orbs.renderers;
 
-import com.decursioteam.pickableorbs.codec.ExtraOptions;
-import com.decursioteam.pickableorbs.codec.OrbData;
-import com.decursioteam.pickableorbs.entities.HalfHeartEntity;
+import com.decursioteam.pickable_orbs.codec.ExtraOptions;
+import com.decursioteam.pickable_orbs.codec.OrbData;
+import com.decursioteam.pickable_orbs.entities.OrbEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -23,7 +23,7 @@ import org.joml.Vector3f;
 import java.awt.Color;
 
 @OnlyIn(Dist.CLIENT)
-public class HalfHeartRenderer extends EntityRenderer<HalfHeartEntity> {
+public class OrbEntityRenderer extends EntityRenderer<OrbEntity> {
 
     private static final float SCALE = 0.3F;
     private static final float Y_OFFSET = 0.1F;
@@ -39,7 +39,7 @@ public class HalfHeartRenderer extends EntityRenderer<HalfHeartEntity> {
     private final Color color;
     private final boolean animation;
 
-    public HalfHeartRenderer(EntityRendererProvider.Context renderManager, OrbData orbData, ExtraOptions extraData) {
+    public OrbEntityRenderer(EntityRendererProvider.Context renderManager, OrbData orbData, ExtraOptions extraData) {
         super(renderManager);
         this.shadowRadius = SHADOW_RADIUS;
         this.shadowStrength = SHADOW_STRENGTH;
@@ -58,12 +58,12 @@ public class HalfHeartRenderer extends EntityRenderer<HalfHeartEntity> {
     }
 
     @Override
-    protected int getBlockLightLevel(HalfHeartEntity entity, BlockPos pos) {
+    protected int getBlockLightLevel(OrbEntity entity, BlockPos pos) {
         return Mth.clamp(super.getBlockLightLevel(entity, pos) + LIGHT_ADJUSTMENT, 0, 15);
     }
 
     @Override
-    public void render(HalfHeartEntity entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
+    public void render(OrbEntity entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         matrixStack.pushPose();
         setupTransformation(matrixStack);
 
@@ -129,7 +129,7 @@ public class HalfHeartRenderer extends EntityRenderer<HalfHeartEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(HalfHeartEntity entity) {
+    public ResourceLocation getTextureLocation(OrbEntity entity) {
         return halfHeartTexture;
     }
 }

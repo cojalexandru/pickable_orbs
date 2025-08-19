@@ -1,8 +1,8 @@
-package com.decursioteam.pickableorbs.datagen;
+package com.decursioteam.pickable_orbs.datagen;
 
-import com.decursioteam.pickableorbs.PickableOrbs;
-import com.decursioteam.pickableorbs.codec.ExtraOptions;
-import com.decursioteam.pickableorbs.codec.OrbData;
+import com.decursioteam.pickable_orbs.PickableOrbs;
+import com.decursioteam.pickable_orbs.codec.ExtraOptions;
+import com.decursioteam.pickable_orbs.codec.OrbData;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -42,7 +42,7 @@ public class Orbs{
         this.extraData = extraData;
         this.rawData = OrbsData.getRegistry().getRawOrbsData(orbData.getName());
         this.registryID = new ResourceLocation(PickableOrbs.MOD_ID + ":" + orbData.getName() + "_orb");
-        this.displayName = Component.translatable("entity.pickableorbs." + orbData.getName() + "_orb");
+        this.displayName = Component.translatable("entity.pickable_orbs." + orbData.getName() + "_orb");
     }
 
     private Orbs(Mutable mutable) {

@@ -1,6 +1,6 @@
-package com.decursioteam.pickableorbs.config;
+package com.decursioteam.pickable_orbs.config;
 
-import com.decursioteam.pickableorbs.PickableOrbs;
+import com.decursioteam.pickable_orbs.PickableOrbs;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.common.ForgeConfigSpec;

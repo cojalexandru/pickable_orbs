@@ -1,17 +1,16 @@
-package com.decursioteam.pickableorbs.registries;
+package com.decursioteam.pickable_orbs.registries;
 
-import com.decursioteam.pickableorbs.PickableOrbs;
-import com.decursioteam.pickableorbs.config.CommonConfig;
-import com.decursioteam.pickableorbs.datagen.OrbsData;
-import com.decursioteam.pickableorbs.datagen.utils.FileUtils;
-import com.decursioteam.pickableorbs.entities.HalfHeartEntity;
+import com.decursioteam.pickable_orbs.PickableOrbs;
+import com.decursioteam.pickable_orbs.config.CommonConfig;
+import com.decursioteam.pickable_orbs.datagen.OrbsData;
+import com.decursioteam.pickable_orbs.datagen.utils.FileUtils;
+import com.decursioteam.pickable_orbs.entities.OrbEntity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -43,8 +42,8 @@ public class Registry {
     }
 
     public static void registerOrb(String name) {
-        RegistryObject<EntityType<? extends HalfHeartEntity>> registryObject = OrbsRegistry.ORB_TYPES.register(name, () -> EntityType.Builder
-                .<HalfHeartEntity>of((type, world) -> new HalfHeartEntity(type, world, name), MobCategory.MISC)
+        RegistryObject<EntityType<? extends OrbEntity>> registryObject = OrbsRegistry.ORB_TYPES.register(name, () -> EntityType.Builder
+                .<OrbEntity>of((type, world) -> new OrbEntity(type, world, name), MobCategory.MISC)
                 .sized(0.5f, 0.5f)
                 .build(name + "_orb"));
         PickableOrbs.LOGGER.warn("ORBTYPE " + registryObject);
@@ -54,7 +53,7 @@ public class Registry {
 
     public static void setupDefaultOrbs() {
         if (CommonConfig.generate_defaults.get()) {
-            FileUtils.setupDefaultFiles("/data/pickableorbs/default_orbs", createCustomPath("orbs"));
+            FileUtils.setupDefaultFiles("/data/pickable_orbs/default_orbs", createCustomPath("orbs"));
         }
         PickableOrbs.LOGGER.info("Loading Orbs...");
         FileUtils.streamFilesAndParse(createCustomPath("orbs"), Registry::parseOrb, "Could not stream orbs!");

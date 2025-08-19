@@ -1,7 +1,7 @@
-package com.decursioteam.pickableorbs.datagen;
+package com.decursioteam.pickable_orbs.datagen;
 
-import com.decursioteam.pickableorbs.PickableOrbs;
-import com.decursioteam.pickableorbs.datagen.utils.IOrbsData;
+import com.decursioteam.pickable_orbs.PickableOrbs;
+import com.decursioteam.pickable_orbs.datagen.utils.IOrbsData;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.ResourceLocation;
@@ -12,24 +12,24 @@ public class OrbsData implements IOrbsData {
 
     private static final OrbsData INSTANCE = new OrbsData();
     private static final Map<String, JsonObject> RAW_DATA = new LinkedHashMap<>();
-    private static final Map<String, com.decursioteam.pickableorbs.datagen.Orbs> CUSTOM_DATA = new LinkedHashMap<>();
+    private static final Map<String, com.decursioteam.pickable_orbs.datagen.Orbs> CUSTOM_DATA = new LinkedHashMap<>();
 
 
     public static OrbsData getRegistry() {
         return INSTANCE;
     }
 
-    public static com.decursioteam.pickableorbs.datagen.Orbs getOrbData(ResourceLocation orbType) {
-        return CUSTOM_DATA.getOrDefault(orbType.getPath().replaceAll("_orb$", ""), com.decursioteam.pickableorbs.datagen.Orbs.DEFAULT);
+    public static com.decursioteam.pickable_orbs.datagen.Orbs getOrbData(ResourceLocation orbType) {
+        return CUSTOM_DATA.getOrDefault(orbType.getPath().replaceAll("_orb$", ""), com.decursioteam.pickable_orbs.datagen.Orbs.DEFAULT);
     }
 
-    public static com.decursioteam.pickableorbs.datagen.Orbs getOrbData(String orbType) {
-        return CUSTOM_DATA.getOrDefault(orbType, com.decursioteam.pickableorbs.datagen.Orbs.DEFAULT);
+    public static com.decursioteam.pickable_orbs.datagen.Orbs getOrbData(String orbType) {
+        return CUSTOM_DATA.getOrDefault(orbType, com.decursioteam.pickable_orbs.datagen.Orbs.DEFAULT);
     }
 
     public void regenerateCustomOrbsData() {
         RAW_DATA.forEach((s, jsonObject) -> CUSTOM_DATA.compute(s, (s1, orbData) ->
-                com.decursioteam.pickableorbs.datagen.Orbs.codec(s).parse(JsonOps.INSTANCE, jsonObject)
+                com.decursioteam.pickable_orbs.datagen.Orbs.codec(s).parse(JsonOps.INSTANCE, jsonObject)
                         .getOrThrow(false, s2 -> PickableOrbs.LOGGER.error("Couldn't create data for {} orb!", s))));
     }
 
@@ -47,11 +47,11 @@ public class OrbsData implements IOrbsData {
     }
 
 
-    public Map<String, com.decursioteam.pickableorbs.datagen.Orbs> getOrbs() {
+    public Map<String, com.decursioteam.pickable_orbs.datagen.Orbs> getOrbs() {
         return Collections.unmodifiableMap(CUSTOM_DATA);
     }
 
-    public Set<com.decursioteam.pickableorbs.datagen.Orbs> getSetOfOrbs() {
+    public Set<com.decursioteam.pickable_orbs.datagen.Orbs> getSetOfOrbs() {
         return Collections.unmodifiableSet(new HashSet<>(CUSTOM_DATA.values()));
     }
 }

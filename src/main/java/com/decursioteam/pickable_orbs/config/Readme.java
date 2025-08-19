@@ -1,4 +1,4 @@
-package com.decursioteam.pickableorbs.config;
+package com.decursioteam.pickable_orbs.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -18,7 +18,7 @@ public class Readme {
                         "\nopening the Resource Packs tab and clicking on the **Open Resource Pack folder** button which is going to open you a file manager " +
                         "\ninstance located in the almost exact spot that you need to be so you can begin everything, " +
                         "\nso to do that go back one folder in the directories tree and after that you should see a **config** folder, click on that one and " +
-                        "\nthen you should see a **pickableorbs** folder, open that and that's it!" +
+                        "\nthen you should see a **pickable_orbs** folder, open that and that's it!" +
 
                         "\n## Modifying already existing orbs" +
                         "\nThis is just a matter of making sure that the generation of the default orbs is set to false in the **common.toml** file, after " +

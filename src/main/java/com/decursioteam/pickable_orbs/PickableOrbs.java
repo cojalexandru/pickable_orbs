@@ -1,27 +1,21 @@
-package com.decursioteam.pickableorbs;
+package com.decursioteam.pickable_orbs;
 
-import com.decursioteam.pickableorbs.client.HPClient;
-import com.decursioteam.pickableorbs.config.CommonConfig;
-import com.decursioteam.pickableorbs.config.Readme;
-import com.decursioteam.pickableorbs.datagen.OrbsData;
-import com.decursioteam.pickableorbs.entities.HalfHeartEntity;
-import com.decursioteam.pickableorbs.registries.OrbsRegistry;
-import com.decursioteam.pickableorbs.registries.Registry;
-import net.minecraft.core.BlockPos;
+import com.decursioteam.pickable_orbs.client.HPClient;
+import com.decursioteam.pickable_orbs.config.CommonConfig;
+import com.decursioteam.pickable_orbs.config.Readme;
+import com.decursioteam.pickable_orbs.datagen.OrbsData;
+import com.decursioteam.pickable_orbs.entities.OrbEntity;
+import com.decursioteam.pickable_orbs.registries.OrbsRegistry;
+import com.decursioteam.pickable_orbs.registries.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -35,20 +29,18 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
-@Mod("pickableorbs")
+@Mod("pickable_orbs")
 @Mod.EventBusSubscriber(modid = PickableOrbs.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PickableOrbs {
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final String MOD_ID = "pickableorbs";
+    public static final String MOD_ID = "pickable_orbs";
 
     public PickableOrbs() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.config, "pickableorbs/common.toml");
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Readme.config, "pickableorbs/readme.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.config, "pickable_orbs/common.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Readme.config, "pickable_orbs/readme.toml");
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         Registry.REGISTRY.register(bus);
@@ -61,7 +53,7 @@ public class PickableOrbs {
         MinecraftForge.EVENT_BUS.addListener(this::entityDropEvent);
         MinecraftForge.EVENT_BUS.addListener(this::blockBreakEvent);
 
-        CommonConfig.loadConfig(CommonConfig.config, FMLPaths.CONFIGDIR.get().resolve("pickableorbs/common.toml").toString());
+        CommonConfig.loadConfig(CommonConfig.config, FMLPaths.CONFIGDIR.get().resolve("pickable_orbs/common.toml").toString());
 
         if (CommonConfig.generate_defaults.get()) {
             Registry.setupDefaultOrbs();
@@ -84,7 +76,7 @@ public class PickableOrbs {
                     if (blockDropChance != 0.0 && blockDropChance >= random.nextDouble() * 100) {
                         // For debugging
                         // e.getPlayer().displayClientMessage(new StringTextComponent(e.getPos().getX() + " " + e.getPos().getY() + " " + e.getPos().getZ()), true);
-                        world.addFreshEntity(new HalfHeartEntity((EntityType<HalfHeartEntity>) entityType.get(), world, e.getPos().getX(), e.getPos().getY(),
+                        world.addFreshEntity(new OrbEntity((EntityType<OrbEntity>) entityType.get(), world, e.getPos().getX(), e.getPos().getY(),
                                 e.getPos().getZ(), s, OrbsData.getOrbData(s)));
                     }
                 }
@@ -94,7 +86,7 @@ public class PickableOrbs {
                     if (blockDropChance != 0.0 && blockDropChance >= random.nextDouble() * 100) {
                         // For debugging
                         // e.getPlayer().displayClientMessage(new StringTextComponent(e.getPos().getX() + " " + e.getPos().getY() + " " + e.getPos().getZ()), true);
-                        world.addFreshEntity(new HalfHeartEntity((EntityType<HalfHeartEntity>) entityType.get(), world, e.getPos().getX(), e.getPos().getY(),
+                        world.addFreshEntity(new OrbEntity((EntityType<OrbEntity>) entityType.get(), world, e.getPos().getX(), e.getPos().getY(),
                                 e.getPos().getZ(), s, OrbsData.getOrbData(s)));
                     }
                 }
@@ -116,7 +108,7 @@ public class PickableOrbs {
                         if (entityDropChance != 0.0 && entityDropChance >= random.nextDouble()*100) {
                             // For debugging
                             // playerEntity.displayClientMessage(new TextComponent(entity.getX() + " " + entity.getY() + " " + entity.getZ()), true);
-                            world.addFreshEntity(new HalfHeartEntity((EntityType<HalfHeartEntity>) entityType.get(), world, entity.getX(), entity.getY(),
+                            world.addFreshEntity(new OrbEntity((EntityType<OrbEntity>) entityType.get(), world, entity.getX(), entity.getY(),
                                     entity.getZ(), s, OrbsData.getOrbData(s)));
                         }
                     }
@@ -126,7 +118,7 @@ public class PickableOrbs {
                         if (entityDropChance != 0.0 && entityDropChance >= random.nextDouble()*100) {
                             // For debugging
                             // playerEntity.displayClientMessage(new TextComponent(entity.getX() + " " + entity.getY() + " " + entity.getZ()), true);
-                            world.addFreshEntity(new HalfHeartEntity((EntityType<HalfHeartEntity>) entityType.get(), world, entity.getX(), entity.getY(),
+                            world.addFreshEntity(new OrbEntity((EntityType<OrbEntity>) entityType.get(), world, entity.getX(), entity.getY(),
                                     entity.getZ(), s, OrbsData.getOrbData(s)));
                         }
                     }

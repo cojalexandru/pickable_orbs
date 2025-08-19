@@ -1,4 +1,4 @@
-package com.decursioteam.pickableorbs.codec;
+package com.decursioteam.pickable_orbs.codec;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
@@ -9,7 +9,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -26,7 +25,7 @@ public class OrbData {
                 Codec.intRange(0, 100).fieldOf("effectMultiplier").orElse(1).forGetter(OrbData::getEffectMultiplier),
                 Codec.intRange(0, Integer.MAX_VALUE).fieldOf("effectDuration").orElse(100).forGetter(OrbData::getEffectDuration),
                 Codec.STRING.fieldOf("color").forGetter(OrbData::getColor),
-                ResourceLocation.CODEC.fieldOf("texture").orElse(new ResourceLocation("pickableorbs:textures/entity/plain_orb.png")).forGetter(OrbData::getTexture),
+                ResourceLocation.CODEC.fieldOf("texture").orElse(new ResourceLocation("pickable_orbs:textures/entity/plain_orb.png")).forGetter(OrbData::getTexture),
                 ResourceLocation.CODEC.listOf().fieldOf("blockList").orElse(ImmutableList.of(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(Blocks.SPAWNER)))).forGetter(OrbData::getBlockSet),
                 Codec.STRING.fieldOf("blockListType").orElse("whitelist").forGetter(OrbData::getBlockListType),
                 Codec.doubleRange(0.0, 100.0).fieldOf("blockDropChance").orElse(0.0).forGetter(OrbData::getBlockDropChance),
@@ -75,7 +74,7 @@ public class OrbData {
 
         this.blockListType = "whitelist";
         this.entityListType = "blacklist";
-        this.texture = new ResourceLocation("pickableorbs:textures/entity/plain_orb.png");
+        this.texture = new ResourceLocation("pickable_orbs:textures/entity/plain_orb.png");
         this.color = "#FF4500";
         this.blockSet = new ArrayList<>();
         this.entitySet = new ArrayList<>();

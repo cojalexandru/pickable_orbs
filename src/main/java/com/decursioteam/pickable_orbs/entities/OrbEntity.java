@@ -1,9 +1,9 @@
-package com.decursioteam.pickableorbs.entities;
+package com.decursioteam.pickable_orbs.entities;
 
-import com.decursioteam.pickableorbs.PickableOrbs;
-import com.decursioteam.pickableorbs.datagen.Orbs;
-import com.decursioteam.pickableorbs.datagen.OrbsData;
-import com.decursioteam.pickableorbs.registries.Registry;
+import com.decursioteam.pickable_orbs.PickableOrbs;
+import com.decursioteam.pickable_orbs.datagen.Orbs;
+import com.decursioteam.pickable_orbs.datagen.OrbsData;
+import com.decursioteam.pickable_orbs.registries.Registry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -24,7 +24,6 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -34,11 +33,10 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Objects;
 
-public class HalfHeartEntity extends Entity {
+public class OrbEntity extends Entity {
     public int tickCount;
     private int age;
     private int throwTime;
@@ -49,7 +47,7 @@ public class HalfHeartEntity extends Entity {
     private int followingTime;
 
     // Constructor to spawn the entity at a specific position with orb data.
-    public HalfHeartEntity(EntityType<HalfHeartEntity> type, Level world, double x, double y, double z, String orbType, Orbs orbData) {
+    public OrbEntity(EntityType<OrbEntity> type, Level world, double x, double y, double z, String orbType, Orbs orbData) {
         super(type, world);
         this.orbData = orbData;
         this.orbType = orbType;
@@ -59,7 +57,7 @@ public class HalfHeartEntity extends Entity {
     }
 
     // Alternate constructor for other use cases (e.g., when loading from saved data).
-    public HalfHeartEntity(EntityType<HalfHeartEntity> type, Level world, String orbType) {
+    public OrbEntity(EntityType<OrbEntity> type, Level world, String orbType) {
         super(type, world);
         this.orbType = orbType;
         this.orbData = OrbsData.getOrbData(orbType);
@@ -184,7 +182,7 @@ public class HalfHeartEntity extends Entity {
                     playerEntity.take(this, 1);
                     int effectMultiplier = orbData.getData().getEffectMultiplier();
                     int effectDuration = orbData.getData().getEffectDuration();
-                    if(Objects.equals(orbData.getData().getType(), new ResourceLocation("pickableorbs:percentage_healing"))){
+                    if(Objects.equals(orbData.getData().getType(), new ResourceLocation("pickable_orbs:percentage_healing"))){
                         playerEntity.heal((float) (playerEntity.getMaxHealth() * ((float)orbData.getData().getEffectMultiplier()) / 100.0));
                     }
                     else try {

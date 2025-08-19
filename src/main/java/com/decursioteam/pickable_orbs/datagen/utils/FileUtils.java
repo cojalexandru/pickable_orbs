@@ -1,6 +1,6 @@
-package com.decursioteam.pickableorbs.datagen.utils;
+package com.decursioteam.pickable_orbs.datagen.utils;
 
-import com.decursioteam.pickableorbs.PickableOrbs;
+import com.decursioteam.pickable_orbs.PickableOrbs;
 import net.minecraftforge.fml.ModList;
 
 import java.io.*;

@@ -1,6 +1,6 @@
-package com.decursioteam.pickableorbs.datagen.utils;
+package com.decursioteam.pickable_orbs.datagen.utils;
 
-import com.decursioteam.pickableorbs.datagen.Orbs;
+import com.decursioteam.pickable_orbs.datagen.Orbs;
 import com.google.gson.JsonObject;
 
 import java.util.Map;

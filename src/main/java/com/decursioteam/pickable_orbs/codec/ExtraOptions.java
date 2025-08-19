@@ -1,4 +1,4 @@
-package com.decursioteam.pickableorbs.codec;
+package com.decursioteam.pickable_orbs.codec;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
