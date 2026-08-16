@@ -145,7 +145,6 @@ public class OrbEntity extends Entity {
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
         if (player.getItemInHand(hand).is(Items.GLASS_BOTTLE) && orbData.getExtraData().getBottleable()) {
             try {
-                // ForgeRegistries -> BuiltInRegistries
                 var mobEffect = BuiltInRegistries.MOB_EFFECT.get(orbData.getData().getType());
                 if (mobEffect != null) {
                     MobEffectInstance mobEffectInstance = new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(mobEffect), orbData.getData().getEffectDuration(), orbData.getData().getEffectMultiplier());
@@ -177,7 +176,6 @@ public class OrbEntity extends Entity {
                     int effectMultiplier = orbData.getData().getEffectMultiplier();
                     int effectDuration = orbData.getData().getEffectDuration();
 
-                    // ResourceLocation instantiation changed to fromNamespaceAndPath
                     if(Objects.equals(orbData.getData().getType(), ResourceLocation.fromNamespaceAndPath("pickable_orbs", "percentage_healing"))){
                         playerEntity.heal((float) (playerEntity.getMaxHealth() * ((float)orbData.getData().getEffectMultiplier()) / 100.0));
                     }
