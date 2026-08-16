@@ -1,0 +1,62 @@
+Initialized native services in: C:\Users\coj-alexandru\.gradle\native
+Initialized jansi services in: C:\Users\coj-alexandru\.gradle\native
+Received JVM installation metadata from 'C:\Program Files\Java\jdk-17': {JAVA_HOME=C:\Program Files\Java\jdk-17, JAVA_VERSION=17.0.12, JAVA_VENDOR=Oracle Corporation, RUNTIME_NAME=Java(TM) SE Runtime Environment, RUNTIME_VERSION=17.0.12+8-LTS-286, VM_NAME=Java HotSpot(TM) 64-Bit Server VM, VM_VERSION=17.0.12+8-LTS-286, VM_VENDOR=Oracle Corporation, OS_ARCH=amd64}
+Found daemon DaemonInfo{pid=42460, address=[5734a39b-60cf-4ac4-a5cd-0cc0bb54df77 port:44433, addresses:[/127.0.0.1]], state=Idle, lastBusy=1786866522997, context=DefaultDaemonContext[uid=cc8a5410-1cd2-40b8-9620-db4cc7fa7589,javaHome=C:\Users\coj-alexandru\.jdks\corretto-21.0.9,javaVersion=21,daemonRegistryDir=C:\Users\coj-alexandru\.gradle\daemon,pid=42460,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-Xmx2G,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]} however its context does not match the desired criteria.
+JVM is incompatible.
+Wanted: DaemonRequestContext{requestedJvm=17.0.12 (Oracle Corporation 17.0.12+8-LTS-286), jvmCriteria=null, daemonOpts=[--add-opens=java.base/java.util=ALL-UNNAMED, --add-opens=java.base/java.lang=ALL-UNNAMED, --add-opens=java.base/java.lang.invoke=ALL-UNNAMED, --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED, --add-opens=java.base/java.nio.charset=ALL-UNNAMED, --add-opens=java.base/java.net=ALL-UNNAMED, --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED, -Xmx2G, -Dfile.encoding=windows-1252, -Duser.country=US, -Duser.language=en, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=cc8a5410-1cd2-40b8-9620-db4cc7fa7589,javaHome=C:\Users\coj-alexandru\.jdks\corretto-21.0.9,javaVersion=21,daemonRegistryDir=C:\Users\coj-alexandru\.gradle\daemon,pid=42460,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-Xmx2G,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]
+
+  Looking for a different daemon...
+Found daemon DaemonInfo{pid=32124, address=[1828a710-3340-4ebc-a340-2a5fefc30602 port:60420, addresses:[/127.0.0.1]], state=Idle, lastBusy=1786866494559, context=DefaultDaemonContext[uid=3e014eb8-dcdf-41eb-8470-f53b59fe60dd,javaHome=C:\Users\coj-alexandru\.antigravity-ide\extensions\redhat.java-1.55.0-win32-x64\jre\21.0.11-win32-x86_64,javaVersion=21,daemonRegistryDir=C:\Users\coj-alexandru\.gradle\daemon,pid=32124,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-Xmx2G,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]} however its context does not match the desired criteria.
+JVM is incompatible.
+Wanted: DaemonRequestContext{requestedJvm=17.0.12 (Oracle Corporation 17.0.12+8-LTS-286), jvmCriteria=null, daemonOpts=[--add-opens=java.base/java.util=ALL-UNNAMED, --add-opens=java.base/java.lang=ALL-UNNAMED, --add-opens=java.base/java.lang.invoke=ALL-UNNAMED, --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED, --add-opens=java.base/java.nio.charset=ALL-UNNAMED, --add-opens=java.base/java.net=ALL-UNNAMED, --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED, -Xmx2G, -Dfile.encoding=windows-1252, -Duser.country=US, -Duser.language=en, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=3e014eb8-dcdf-41eb-8470-f53b59fe60dd,javaHome=C:\Users\coj-alexandru\.antigravity-ide\extensions\redhat.java-1.55.0-win32-x64\jre\21.0.11-win32-x86_64,javaVersion=21,daemonRegistryDir=C:\Users\coj-alexandru\.gradle\daemon,pid=32124,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-Xmx2G,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]
+
+  Looking for a different daemon...
+The client will now receive all logging from the daemon (pid: 8332). The daemon log file: C:\Users\coj-alexandru\.gradle\daemon\8.8\daemon-8332.out.log
+Starting 11th build in daemon [uptime: 2 hrs 21 mins 20.864 secs, performance: 100%, GC rate: 0.00/s, heap usage: 0% of 2 GiB]
+Using 16 worker leases.
+Calculating task graph as no cached configuration is available for tasks: compileJava
+Now considering [C:\Users\coj-alexandru\Documents\mods\untitled] as hierarchies to watch
+Watching the file system is configured to be enabled if available
+File system watching is active
+Starting Build
+Transforming foojay-resolver-0.8.0.jar (org.gradle.toolchains:foojay-resolver:0.8.0) with InstrumentationAnalysisTransform
+Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with InstrumentationAnalysisTransform
+Transforming foojay-resolver-0.8.0.jar (org.gradle.toolchains:foojay-resolver:0.8.0) with InstrumentationAnalysisTransform
+Transforming foojay-resolver-0.8.0.jar (org.gradle.toolchains:foojay-resolver:0.8.0) with MergeInstrumentationAnalysisTransform
+Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with InstrumentationAnalysisTransform
+Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with MergeInstrumentationAnalysisTransform
+Transforming foojay-resolver-0.8.0.jar (org.gradle.toolchains:foojay-resolver:0.8.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with ExternalDependencyInstrumentingArtifactTransform
+Settings evaluated using settings file 'C:\Users\coj-alexandru\Documents\mods\untitled\settings.gradle'.
+Using local directory build cache for the root build (location = C:\Users\coj-alexandru\.gradle\caches\build-cache-1, removeUnusedEntriesAfter = 7 days).
+Projects loaded. Root project using build file 'C:\Users\coj-alexandru\Documents\mods\untitled\build.gradle'.
+Included projects: [root project 'untitled']
+
+> Configure project :
+Evaluating root project 'untitled' using build file 'C:\Users\coj-alexandru\Documents\mods\untitled\build.gradle'.
+Transforming moddev-gradle-2.0.144.jar (net.neoforged:moddev-gradle:2.0.144) with InstrumentationAnalysisTransform
+Transforming gradle-idea-ext-1.2.jar (gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.2) with InstrumentationAnalysisTransform
+Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with InstrumentationAnalysisTransform
+Transforming moddev-gradle-2.0.144.jar (net.neoforged:moddev-gradle:2.0.144) with InstrumentationAnalysisTransform
+Transforming moddev-gradle-2.0.144.jar (net.neoforged:moddev-gradle:2.0.144) with MergeInstrumentationAnalysisTransform
+Transforming gradle-idea-ext-1.2.jar (gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.2) with InstrumentationAnalysisTransform
+Transforming gradle-idea-ext-1.2.jar (gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.2) with MergeInstrumentationAnalysisTransform
+Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with InstrumentationAnalysisTransform
+Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with MergeInstrumentationAnalysisTransform
+Transforming moddev-gradle-2.0.144.jar (net.neoforged:moddev-gradle:2.0.144) with ExternalDependencyInstrumentingArtifactTransform
+Transforming gradle-idea-ext-1.2.jar (gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with ExternalDependencyInstrumentingArtifactTransform
+All projects evaluated.
+Task name matched 'compileJava'
+Selected primary task 'compileJava' from project :
+Tasks to be executed: [task ':createMinecraftArtifacts', task ':compileJava']
+Tasks that were excluded: []
+Variant Selection Exception: org.gradle.internal.component.resolution.failure.exception.ArtifactVariantSelectionException caused by Resolution Failure: org.gradle.internal.component.resolution.failure.type.IncompatibleMultipleNodeSelectionFailure
+
+0 problems were found storing the configuration cache.
+
+See the complete report at file:///C:/Users/coj-alexandru/Documents/mods/untitled/build/reports/configuration-cache/3fz5lpal66ujg7xwmjuhie5n4/vsfqfm4k3mv41y0btpui0shi/configuration-cache-report.html
+Watched directory hierarchies: [C:\Users\coj-alexandru\Documents\mods\untitled]
+Configuration cache entry discarded due to serialization error.

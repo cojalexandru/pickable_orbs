@@ -10,30 +10,21 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
-import org.antlr.v4.runtime.misc.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
-public class Orbs{
+public class Orbs {
 
     public static final Orbs DEFAULT = new Orbs(OrbData.DEFAULT, ExtraOptions.DEFAULT);
-
-
-    public static Codec<Orbs> codec(String name) {
-        return RecordCodecBuilder.create(instance -> instance.group(
-                OrbData.codec(name).fieldOf("OrbData").orElseGet((Consumer<String>) s -> PickableOrbs.LOGGER.error("OrbData is REQUIRED!"), null).forGetter(Orbs::getData),
-                ExtraOptions.CODEC.fieldOf("ExtraData").orElse(ExtraOptions.DEFAULT).forGetter(Orbs::getExtraData)
-        ).apply(instance, Orbs::new));
-    }
-
     protected OrbData orbData;
     protected ExtraOptions extraData;
     protected JsonObject rawData;
-    protected ResourceLocation registryID;
+    protected Identifier registryID;
     protected EntityType<?> entityType;
     protected MutableComponent displayName;
 
@@ -41,7 +32,7 @@ public class Orbs{
         this.orbData = orbData;
         this.extraData = extraData;
         this.rawData = OrbsData.getRegistry().getRawOrbsData(orbData.getName());
-        this.registryID = ResourceLocation.fromNamespaceAndPath(PickableOrbs.MOD_ID, orbData.getName() + "_orb");
+        this.registryID = Identifier.fromNamespaceAndPath(PickableOrbs.MOD_ID, orbData.getName() + "_orb");
         this.displayName = Component.translatable("entity.com.decursioteam.pickable_orbs." + orbData.getName() + "_orb");
     }
 
@@ -54,6 +45,13 @@ public class Orbs{
         this.displayName = mutable.displayName;
     }
 
+    public static Codec<Orbs> codec(String name) {
+        return RecordCodecBuilder.create(instance -> instance.group(
+                OrbData.codec(name).fieldOf("OrbData").orElseGet((Consumer<String>) s -> PickableOrbs.LOGGER.error("OrbData is REQUIRED!"), null).forGetter(Orbs::getData),
+                ExtraOptions.CODEC.fieldOf("ExtraData").orElse(ExtraOptions.DEFAULT).forGetter(Orbs::getExtraData)
+        ).apply(instance, Orbs::new));
+    }
+
     public OrbData getData() {
         return orbData;
     }
@@ -62,15 +60,16 @@ public class Orbs{
         return extraData;
     }
 
-    public @NotNull
-    EntityType<?> getEntityType() {
+    public @NotNull EntityType<?> getEntityType() {
         if (entityType == null) {
-            this.entityType = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryParse(registryID.toString()));;
+            this.entityType = BuiltInRegistries.ENTITY_TYPE.get(this.registryID)
+                    .map(holder -> holder.value())
+                    .orElse(null);
         }
         return entityType == null ? EntityType.EXPERIENCE_ORB : entityType;
     }
 
-    public ResourceLocation getRegistryID() {
+    public Identifier getRegistryID() {
         return registryID;
     }
 
@@ -107,7 +106,7 @@ public class Orbs{
             return this;
         }
 
-        public Mutable setRegistryID(ResourceLocation registryID) {
+        public Mutable setRegistryID(Identifier registryID) {
             this.registryID = registryID;
             return this;
         }

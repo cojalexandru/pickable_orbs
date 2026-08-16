@@ -8,12 +8,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
@@ -28,100 +29,122 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.server.level.ServerEntity;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
 public class OrbEntity extends Entity {
+
+    private static final EntityDataAccessor<String> ORB_TYPE = SynchedEntityData.defineId(OrbEntity.class, EntityDataSerializers.STRING);
+
     public int tickCount;
     private int age;
     private int throwTime;
     private int health = 5;
-    protected final Orbs orbData;
-    protected final String orbType;
     private Player followingPlayer;
     private int followingTime;
 
-    public OrbEntity(EntityType<OrbEntity> type, Level world, double x, double y, double z, String orbType, Orbs orbData) {
+    public OrbEntity(EntityType<OrbEntity> type, Level world) {
         super(type, world);
-        this.orbData = orbData;
-        this.orbType = orbType;
+    }
+
+    public OrbEntity(EntityType<OrbEntity> type, Level world, double x, double y, double z, String orbType) {
+        super(type, world);
+        this.setOrbType(orbType);
         this.setPos(x, y, z);
-        this.yRotO = (float) (this.random.nextDouble() * 360.0D);
-        this.setDeltaMovement((this.random.nextDouble() * 0.2F - 0.1F) * 2.0D, this.random.nextDouble() * 0.2D * 2.0D, (this.random.nextDouble() * 0.2F - 0.1F) * 2.0D);
+        this.setYRot(this.random.nextFloat() * 360.0F);
+        this.setDeltaMovement((this.random.nextDouble() * 0.2D - 0.1D) * 2.0D, this.random.nextDouble() * 0.2D * 2.0D, (this.random.nextDouble() * 0.2D - 0.1D) * 2.0D);
     }
 
     public OrbEntity(EntityType<OrbEntity> type, Level world, String orbType) {
         super(type, world);
-        this.orbType = orbType;
-        this.orbData = OrbsData.getOrbData(orbType);
+        this.setOrbType(orbType);
+    }
+
+    public String getOrbType() {
+        return this.entityData.get(ORB_TYPE);
+    }
+
+    public void setOrbType(String orbType) {
+        this.entityData.set(ORB_TYPE, orbType);
+    }
+
+    public Orbs getOrbData() {
+        return OrbsData.getOrbData(this.getOrbType());
+    }
+
+    @Override
+    protected double getDefaultGravity() {
+        return 0.03D;
     }
 
     @Override
     public void tick() {
-        super.tick();
-        this.xo = this.getX();
-        this.yo = this.getY();
-        this.zo = this.getZ();
+        if (this.firstTick && this.level().isClientSide()) {
+            this.firstTick = false;
+        } else {
+            super.tick();
 
-        if (this.isEyeInFluid(FluidTags.WATER)) {
-            this.setUnderwaterMovement();
-        } else if (!this.isNoGravity()) {
-            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.03D, 0.0D));
-        }
+            if (this.getFluidInteraction().isEyeInFluidMatching(this, (var0, type, var2) -> type.getIsWaterLike())) {
+                this.setUnderwaterMovement();
+            } else if (!this.level().noCollision(this.getBoundingBox())) {
+                // Do nothing to gravity if colliding heavily
+            } else if (!this.isNoGravity()) {
+                this.applyGravity();
+            }
 
-        if (this.level().getFluidState(this.blockPosition()).is(FluidTags.LAVA)) {
-            this.setDeltaMovement((this.random.nextFloat() - this.random.nextFloat()) * 0.2F, 0.2D, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
-            this.playSound(SoundEvents.GENERIC_BURN, 0.4F, 2.0F + this.random.nextFloat() * 0.4F);
-        }
+            if (this.level().getFluidState(this.blockPosition()).is(FluidTags.LAVA)) {
+                this.setDeltaMovement((this.random.nextFloat() - this.random.nextFloat()) * 0.2F, 0.2D, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+                this.playSound(SoundEvents.GENERIC_BURN, 0.4F, 2.0F + this.random.nextFloat() * 0.4F);
+            }
 
-        if (!this.level().noCollision(this.getBoundingBox())) {
-            this.moveTowardsClosestSpace(this.getX(), (this.getBoundingBox().minY + this.getBoundingBox().maxY) / 2.0D, this.getZ());
-        }
-        this.move(MoverType.SELF, this.getDeltaMovement());
+            if (!this.level().noCollision(this.getBoundingBox())) {
+                this.moveTowardsClosestSpace(this.getX(), (this.getBoundingBox().minY + this.getBoundingBox().maxY) / 2.0D, this.getZ());
+            }
+            this.move(MoverType.SELF, this.getDeltaMovement());
 
-        float friction = 0.98F;
-        if (this.onGround()) {
-            BlockPos pos = new BlockPos((int) this.getX(), (int) (this.getY() - 1.0D), (int) this.getZ());
-            friction = this.level().getBlockState(pos).getFriction(this.level(), pos, this) * 0.98F;
-        }
+            float friction = 0.98F;
+            if (this.onGround()) {
+                BlockPos pos = this.getBlockPosBelowThatAffectsMyMovement();
+                friction = this.level().getBlockState(pos).getFriction(this.level(), pos, this) * 0.98F;
+            }
 
-        this.setDeltaMovement(this.getDeltaMovement().multiply(friction, 0.98D, friction));
+            this.setDeltaMovement(this.getDeltaMovement().multiply(friction, 0.98D, friction));
 
-        if (this.onGround()) {
-            this.setDeltaMovement(this.getDeltaMovement().multiply(1.0D, -0.9D, 1.0D));
-        }
+            if (this.onGround()) {
+                this.setDeltaMovement(this.getDeltaMovement().multiply(1.0D, -0.9D, 1.0D));
+            }
 
-        if (orbData.getExtraData().getFollowPlayer()) {
-            if (this.followingTime < this.tickCount - 20 + this.getId() % 100) {
-                if (this.followingPlayer == null || this.followingPlayer.distanceToSqr(this) > 64.0D) {
-                    this.followingPlayer = this.level().getNearestPlayer(this, 8.0D);
+            if (this.getOrbData().getExtraData().getFollowPlayer()) {
+                if (this.followingTime < this.tickCount - 20 + this.getId() % 100) {
+                    if (this.followingPlayer == null || this.followingPlayer.distanceToSqr(this) > 64.0D) {
+                        this.followingPlayer = this.level().getNearestPlayer(this, 8.0D);
+                    }
+                    this.followingTime = this.tickCount;
                 }
-                this.followingTime = this.tickCount;
-            }
 
-            if (this.followingPlayer != null && this.followingPlayer.isSpectator()) {
-                this.followingPlayer = null;
-            }
+                if (this.followingPlayer != null && this.followingPlayer.isSpectator()) {
+                    this.followingPlayer = null;
+                }
 
-            if (this.followingPlayer != null) {
-                Vec3 direction = new Vec3(this.followingPlayer.getX() - this.getX(), this.followingPlayer.getY() + (double) this.followingPlayer.getEyeHeight() / 2.0D - this.getY(), this.followingPlayer.getZ() - this.getZ());
-                double distanceSquared = direction.lengthSqr();
-                if (distanceSquared < 64.0D) {
-                    double factor = 1.0D - Math.sqrt(distanceSquared) / 8.0D;
-                    this.setDeltaMovement(this.getDeltaMovement().add(direction.normalize().scale(factor * factor * 0.1D)));
+                if (this.followingPlayer != null) {
+                    Vec3 direction = new Vec3(this.followingPlayer.getX() - this.getX(), this.followingPlayer.getY() + (double) this.followingPlayer.getEyeHeight() / 2.0D - this.getY(), this.followingPlayer.getZ() - this.getZ());
+                    double distanceSquared = direction.lengthSqr();
+                    if (distanceSquared < 64.0D) {
+                        double factor = 1.0D - Math.sqrt(distanceSquared) / 8.0D;
+                        this.setDeltaMovement(this.getDeltaMovement().add(direction.normalize().scale(factor * factor * 0.1D)));
+                    }
                 }
             }
-        }
 
-        this.age++;
-        if (this.age >= 6000) {
-            this.discard(); // 'remove(RemovalReason.DISCARDED)' is now just 'discard()'
+            this.age++;
+            if (this.age >= 6000) {
+                this.discard();
+            }
         }
     }
 
@@ -131,36 +154,55 @@ public class OrbEntity extends Entity {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float damage) {
-        if (this.level().isClientSide || this.isRemoved()) return false;
-        if (this.isInvulnerableTo(source)) return false;
-        this.health -= damage;
-        if (this.health <= 0) {
-            this.kill(); // 'remove(RemovalReason.KILLED)' is now just 'kill()'
-        }
-        return true;
+    public final boolean hurtClient(DamageSource source) {
+        return !this.isInvulnerableToBase(source);
     }
 
     @Override
-    public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
-        if (player.getItemInHand(hand).is(Items.GLASS_BOTTLE) && orbData.getExtraData().getBottleable()) {
+    public final boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
+        if (this.isInvulnerableToBase(source)) {
+            return false;
+        } else {
+            this.markHurt();
+            this.health = (int) ((float) this.health - damage);
+            if (this.health <= 0) {
+                this.discard();
+            }
+            return true;
+        }
+    }
+
+    @Override
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
+        if (player.getItemInHand(hand).is(Items.GLASS_BOTTLE) && this.getOrbData().getExtraData().getBottleable()) {
             try {
-                var mobEffect = BuiltInRegistries.MOB_EFFECT.get(orbData.getData().getType());
-                if (mobEffect != null) {
-                    MobEffectInstance mobEffectInstance = new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(mobEffect), orbData.getData().getEffectDuration(), orbData.getData().getEffectMultiplier());
+                var mobEffect = BuiltInRegistries.MOB_EFFECT.get(this.getOrbData().getData().getType());
+                if (mobEffect.isPresent()) {
+                    MobEffectInstance mobEffectInstance = new MobEffectInstance(
+                            BuiltInRegistries.MOB_EFFECT.wrapAsHolder(mobEffect.get().value()),
+                            this.getOrbData().getData().getEffectDuration(),
+                            this.getOrbData().getData().getEffectMultiplier()
+                    );
+
                     ItemStack stack = new ItemStack(Items.POTION);
 
-                    PotionContents contents = new PotionContents(Optional.empty(), Optional.empty(), Collections.singletonList(mobEffectInstance));
+                    PotionContents contents = new PotionContents(
+                            Optional.empty(),
+                            Optional.empty(),
+                            Collections.singletonList(mobEffectInstance),
+                            Optional.empty()
+                    );
+
                     stack.set(DataComponents.POTION_CONTENTS, contents);
+                    stack.set(DataComponents.CUSTOM_NAME, Component.literal("Potion of " + this.getOrbData().getData().getName()).withStyle(ChatFormatting.RESET));
 
-                    stack.set(DataComponents.CUSTOM_NAME, Component.literal("Potion of " + orbData.getData().getName()).withStyle(ChatFormatting.RESET));
+                    player.getInventory().add(stack);
 
-                    ItemHandlerHelper.giveItemToPlayer(player, stack);
                     this.discard();
-                    player.getItemInHand(hand).shrink(1); // 'setCount(count - 1)' -> 'shrink(1)'
+                    player.getItemInHand(hand).shrink(1);
                 }
             } catch (Exception e) {
-                // PickableOrbs.LOGGER.debug("[PickableOrbs] - The orb type of: " + orbData.getData().getType() + " is invalid.");
+                // Ignore
             }
             return InteractionResult.SUCCESS;
         }
@@ -169,28 +211,28 @@ public class OrbEntity extends Entity {
 
     @Override
     public void playerTouch(Player playerEntity) {
-        if (!this.level().isClientSide) {
+        if (playerEntity instanceof ServerPlayer serverPlayer) {
             if (this.throwTime == 0) {
-                if (this.age >= orbData.getExtraData().getPickupDelay()) {
-                    playerEntity.take(this, 1);
-                    int effectMultiplier = orbData.getData().getEffectMultiplier();
-                    int effectDuration = orbData.getData().getEffectDuration();
+                if (this.age >= this.getOrbData().getExtraData().getPickupDelay()) {
+                    serverPlayer.take(this, 1);
+                    int effectMultiplier = this.getOrbData().getData().getEffectMultiplier();
+                    int effectDuration = this.getOrbData().getData().getEffectDuration();
 
-                    if(Objects.equals(orbData.getData().getType(), ResourceLocation.fromNamespaceAndPath("pickable_orbs", "percentage_healing"))){
-                        playerEntity.heal((float) (playerEntity.getMaxHealth() * ((float)orbData.getData().getEffectMultiplier()) / 100.0));
-                    }
-                    else try {
-                        var mobEffect = BuiltInRegistries.MOB_EFFECT.get(orbData.getData().getType());
-                        if (mobEffect != null) {
-                            playerEntity.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(mobEffect), effectDuration, effectMultiplier));
+                    if (Objects.equals(this.getOrbData().getData().getType(), Identifier.fromNamespaceAndPath("pickable_orbs", "percentage_healing"))) {
+                        serverPlayer.heal((float) (serverPlayer.getMaxHealth() * ((float) effectMultiplier) / 100.0));
+                    } else try {
+                        var mobEffect = BuiltInRegistries.MOB_EFFECT.get(this.getOrbData().getData().getType());
+                        if (mobEffect != null && mobEffect.isPresent()) {
+                            serverPlayer.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(mobEffect.get().value()), effectDuration, effectMultiplier));
                         }
                     } catch (Exception e) {
-                        PickableOrbs.LOGGER.error("[PickableOrbs] - The orb type of: " + orbData.getData().getName() + " is invalid.");
+                        PickableOrbs.LOGGER.error("[PickableOrbs] - The orb type of: " + this.getOrbData().getData().getName() + " is invalid.");
                     }
 
-                    if(!orbData.getExtraData().getPickupMessage().isEmpty())
-                        playerEntity.displayClientMessage(Component.literal(orbData.getExtraData().getPickupMessage()), true);
-                    if(orbData.getExtraData().getSound()) this.playSound(Registry.GET_HEART_SOUND.get(), 0.4F, 0.95F);
+                    if (!this.getOrbData().getExtraData().getPickupMessage().isEmpty())
+                        serverPlayer.sendSystemMessage(Component.literal(this.getOrbData().getExtraData().getPickupMessage()), true);
+                    if (this.getOrbData().getExtraData().getSound())
+                        this.playSound(Registry.GET_HEART_SOUND.get(), 0.4F, 0.95F);
                     this.discard();
                 }
             }
@@ -198,12 +240,8 @@ public class OrbEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
-        return new ClientboundAddEntityPacket(this, entity);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(ORB_TYPE, "health");
     }
 
     @Override
@@ -212,15 +250,16 @@ public class OrbEntity extends Entity {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(ValueOutput output) {
+        output.putShort("Health", (short) this.health);
+        output.putShort("Age", (short) this.age);
+        output.putString("OrbType", this.getOrbType());
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
-    }
-
-    @Override
-    public boolean isInvulnerableTo(DamageSource source) {
-        return true;
+    protected void readAdditionalSaveData(ValueInput input) {
+        this.health = input.getShortOr("Health", (short) 5);
+        this.age = input.getShortOr("Age", (short) 0);
+        this.setOrbType(input.getStringOr("OrbType", "health"));
     }
 }

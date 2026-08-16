@@ -7,48 +7,30 @@ import com.mojang.serialization.Encoder;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Blocks;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class OrbData {
 
     public static final OrbData DEFAULT = new OrbData("error");
-
-    public static Codec<OrbData> codec(String name) {
-        return RecordCodecBuilder.create(instance -> instance.group(
-                MapCodec.of(Encoder.empty(), Decoder.unit(() -> name)).forGetter(OrbData::getName),
-                ResourceLocation.CODEC.fieldOf("type").orElse(ResourceLocation.parse("minecraft:instant_health")).forGetter(OrbData::getType),
-                Codec.intRange(0, 100).fieldOf("effectMultiplier").orElse(1).forGetter(OrbData::getEffectMultiplier),
-                Codec.intRange(0, Integer.MAX_VALUE).fieldOf("effectDuration").orElse(100).forGetter(OrbData::getEffectDuration),
-                Codec.STRING.fieldOf("color").forGetter(OrbData::getColor),
-                ResourceLocation.CODEC.fieldOf("texture").orElse(ResourceLocation.parse("pickable_orbs:textures/entity/plain_orb.png")).forGetter(OrbData::getTexture),
-                ResourceLocation.CODEC.listOf().fieldOf("blockList").orElse(ImmutableList.of(Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(Blocks.SPAWNER)))).forGetter(OrbData::getBlockSet),
-                Codec.STRING.fieldOf("blockListType").orElse("whitelist").forGetter(OrbData::getBlockListType),
-                Codec.doubleRange(0.0, 100.0).fieldOf("blockDropChance").orElse(0.0).forGetter(OrbData::getBlockDropChance),
-                ResourceLocation.CODEC.listOf().fieldOf("entityList").orElse(ImmutableList.of(Objects.requireNonNull(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.RABBIT)))).forGetter(OrbData::getEntitySet),
-                Codec.STRING.fieldOf("entityListType").orElse("whitelist").forGetter(OrbData::getEntityListType),
-                Codec.doubleRange(0.0, 100.0).fieldOf("entityDropChance").orElse(0.0).forGetter(OrbData::getEntityDropChance)
-        ).apply(instance, OrbData::new));
-    }
-
-
     protected double blockDropChance;
     protected double entityDropChance;
     protected int effectMultiplier;
     protected int effectDuration;
-    protected ResourceLocation texture;
-    protected List<ResourceLocation> blockSet;
-    protected List<ResourceLocation> entitySet;
+    protected Identifier texture;
+    protected List<Identifier> blockSet;
+    protected List<Identifier> entitySet;
     protected String color;
     protected String name;
-    protected ResourceLocation type;
+    protected Identifier type;
     protected String blockListType;
     protected String entityListType;
-
-    private OrbData(String name, ResourceLocation type, int effectMultiplier, int effectDuration, String color, ResourceLocation texture, List<ResourceLocation> blockSet, String blockListType, double blockDropChance, List<ResourceLocation> entitySet, String entityListType, double entityDropChance){
+    private OrbData(String name, Identifier type, int effectMultiplier, int effectDuration, String color, Identifier texture, List<Identifier> blockSet, String blockListType, double blockDropChance, List<Identifier> entitySet, String entityListType, double entityDropChance) {
         this.name = name;
         this.effectDuration = effectDuration;
         this.effectMultiplier = effectMultiplier;
@@ -65,7 +47,7 @@ public class OrbData {
 
     private OrbData(String name) {
         this.name = name;
-        this.type = ResourceLocation.parse("minecraft:instant_health");
+        this.type = Identifier.parse("minecraft:instant_health");
         this.effectMultiplier = 1;
         this.effectDuration = 100;
         this.blockDropChance = 1.0;
@@ -73,10 +55,27 @@ public class OrbData {
 
         this.blockListType = "whitelist";
         this.entityListType = "blacklist";
-        this.texture = ResourceLocation.parse("pickable_orbs:textures/entity/plain_orb.png");
+        this.texture = Identifier.parse("pickable_orbs:textures/entity/plain_orb.png");
         this.color = "#FF4500";
         this.blockSet = new ArrayList<>();
         this.entitySet = new ArrayList<>();
+    }
+
+    public static Codec<OrbData> codec(String name) {
+        return RecordCodecBuilder.create(instance -> instance.group(
+                MapCodec.of(Encoder.empty(), Decoder.unit(() -> name)).forGetter(OrbData::getName),
+                Identifier.CODEC.fieldOf("type").orElse(Identifier.parse("minecraft:instant_health")).forGetter(OrbData::getType),
+                Codec.intRange(0, 100).fieldOf("effectMultiplier").orElse(1).forGetter(OrbData::getEffectMultiplier),
+                Codec.intRange(0, Integer.MAX_VALUE).fieldOf("effectDuration").orElse(100).forGetter(OrbData::getEffectDuration),
+                Codec.STRING.fieldOf("color").forGetter(OrbData::getColor),
+                Identifier.CODEC.fieldOf("texture").orElse(Identifier.parse("pickable_orbs:textures/entity/plain_orb.png")).forGetter(OrbData::getTexture),
+                Identifier.CODEC.listOf().fieldOf("blockList").orElse(ImmutableList.of(Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(Blocks.SPAWNER)))).forGetter(OrbData::getBlockSet),
+                Codec.STRING.fieldOf("blockListType").orElse("whitelist").forGetter(OrbData::getBlockListType),
+                Codec.doubleRange(0.0, 100.0).fieldOf("blockDropChance").orElse(0.0).forGetter(OrbData::getBlockDropChance),
+                Identifier.CODEC.listOf().fieldOf("entityList").orElse(ImmutableList.of(Objects.requireNonNull(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.RABBIT)))).forGetter(OrbData::getEntitySet),
+                Codec.STRING.fieldOf("entityListType").orElse("whitelist").forGetter(OrbData::getEntityListType),
+                Codec.doubleRange(0.0, 100.0).fieldOf("entityDropChance").orElse(0.0).forGetter(OrbData::getEntityDropChance)
+        ).apply(instance, OrbData::new));
     }
 
     public int getEffectMultiplier() {
@@ -87,11 +86,11 @@ public class OrbData {
         return effectDuration;
     }
 
-    public List<ResourceLocation> getBlockSet() {
+    public List<Identifier> getBlockSet() {
         return blockSet;
     }
 
-    public List<ResourceLocation> getEntitySet() {
+    public List<Identifier> getEntitySet() {
         return entitySet;
     }
 
@@ -115,7 +114,7 @@ public class OrbData {
         return entityListType;
     }
 
-    public ResourceLocation getType() {
+    public Identifier getType() {
         return type;
     }
 
@@ -123,7 +122,7 @@ public class OrbData {
         return name;
     }
 
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return texture;
     }
 
@@ -133,7 +132,7 @@ public class OrbData {
 
     public static class Mutable extends OrbData {
 
-        public Mutable(String name, ResourceLocation type, int effectMultiplier, int effectDuration, String color, ResourceLocation texture, List<ResourceLocation> blockSet, String blockListType, double blockDropChance, List<ResourceLocation> entitySet, String entityListType, double entityDropChance) {
+        public Mutable(String name, Identifier type, int effectMultiplier, int effectDuration, String color, Identifier texture, List<Identifier> blockSet, String blockListType, double blockDropChance, List<Identifier> entitySet, String entityListType, double entityDropChance) {
             super(name, type, effectMultiplier, effectDuration, color, texture, blockSet, blockListType, blockDropChance, entitySet, entityListType, entityDropChance);
         }
 
@@ -145,6 +144,7 @@ public class OrbData {
             this.blockDropChance = blockDropChance;
             return this;
         }
+
         public Mutable setEntityDropChance(double entityDropChance) {
             this.entityDropChance = entityDropChance;
             return this;
@@ -175,7 +175,7 @@ public class OrbData {
             return this;
         }
 
-        public Mutable setBlockSet(List<ResourceLocation> blockSet) {
+        public Mutable setBlockSet(List<Identifier> blockSet) {
             this.blockSet = blockSet;
             return this;
         }

@@ -1,10 +1,9 @@
 package com.decursioteam.pickable_orbs.datagen;
 
-import com.decursioteam.pickable_orbs.PickableOrbs;
 import com.decursioteam.pickable_orbs.datagen.utils.IOrbsData;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 
@@ -19,12 +18,17 @@ public class OrbsData implements IOrbsData {
         return INSTANCE;
     }
 
-    public static com.decursioteam.pickable_orbs.datagen.Orbs getOrbData(ResourceLocation orbType) {
+    public static com.decursioteam.pickable_orbs.datagen.Orbs getOrbData(Identifier orbType) {
         return CUSTOM_DATA.getOrDefault(orbType.getPath().replaceAll("_orb$", ""), com.decursioteam.pickable_orbs.datagen.Orbs.DEFAULT);
     }
 
     public static com.decursioteam.pickable_orbs.datagen.Orbs getOrbData(String orbType) {
         return CUSTOM_DATA.getOrDefault(orbType, com.decursioteam.pickable_orbs.datagen.Orbs.DEFAULT);
+    }
+
+    public void clearData() {
+        RAW_DATA.clear();
+        CUSTOM_DATA.clear();
     }
 
     public void regenerateCustomOrbsData() {

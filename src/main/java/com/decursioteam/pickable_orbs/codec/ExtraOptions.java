@@ -24,7 +24,7 @@ public class ExtraOptions {
     protected boolean followPlayer;
     protected int pickupDelay;
 
-    private ExtraOptions(String pickupMessage, boolean animation, boolean bottleable, boolean sound, boolean followPlayer, int pickupDelay){
+    private ExtraOptions(String pickupMessage, boolean animation, boolean bottleable, boolean sound, boolean followPlayer, int pickupDelay) {
         this.sound = sound;
         this.pickupMessage = pickupMessage;
         this.bottleable = bottleable;
