@@ -38,7 +38,8 @@ public class OrbEntityRenderer extends EntityRenderer<OrbEntity, OrbEntityRender
     }
 
     private static Color parseColor(String colorString) {
-        if (colorString == null) return Color.WHITE;
+        if (colorString == null)
+            return Color.WHITE;
         if (!colorString.startsWith("#")) {
             colorString = "#" + colorString;
         }
@@ -46,7 +47,7 @@ public class OrbEntityRenderer extends EntityRenderer<OrbEntity, OrbEntityRender
     }
 
     private static void vertex(VertexConsumer buffer, PoseStack.Pose pose, float x, float y, Color color,
-                               float texU, float texV, int packedLight) {
+            float texU, float texV, int packedLight) {
 
         buffer.addVertex(pose, x, y, 0.0F)
                 .setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha())
@@ -96,8 +97,10 @@ public class OrbEntityRenderer extends EntityRenderer<OrbEntity, OrbEntityRender
     }
 
     @Override
-    public void submit(OrbRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-        if (state.renderType == null) return;
+    public void submit(OrbRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
+            CameraRenderState camera) {
+        if (state.renderType == null)
+            return;
 
         poseStack.pushPose();
 
@@ -106,12 +109,12 @@ public class OrbEntityRenderer extends EntityRenderer<OrbEntity, OrbEntityRender
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         poseStack.scale(SCALE, SCALE, SCALE);
 
-        float animationProgress = state.ageInTicks / 2.0F;
+        float animationProgress = state.ageInTicks / 3.0F;
         Color renderColor = state.animation ? getAnimatedColor(animationProgress, state.color) : state.color;
         int spriteIndex = (state.tickCount / 2) % 16;
 
         submitNodeCollector.submitCustomGeometry(poseStack, state.renderType, (pose, buffer) -> {
-            renderQuad(buffer, pose, renderColor, state.lightCoords, spriteIndex);
+            renderQuad(buffer, pose, renderColor, 15728880, spriteIndex);
         });
 
         poseStack.popPose();
@@ -120,11 +123,12 @@ public class OrbEntityRenderer extends EntityRenderer<OrbEntity, OrbEntityRender
 
     private Color getAnimatedColor(float progress, Color baseColor) {
         float factor = (Mth.sin(progress) + 1.0F) * 0.5F;
+        int alpha = (int) (100 + factor * 155);
         return new Color(
-                Math.round(factor * baseColor.getRed()),
-                Math.round(factor * baseColor.getGreen()),
-                Math.round(factor * baseColor.getBlue()),
-                155);
+                baseColor.getRed(),
+                baseColor.getGreen(),
+                baseColor.getBlue(),
+                alpha);
     }
 
     private void renderQuad(VertexConsumer buffer, PoseStack.Pose pose, Color color, int packedLight, int spriteIndex) {
